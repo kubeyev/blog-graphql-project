@@ -19,7 +19,8 @@ public class PostQuery {
     return this.postService.getAllPosts(count);
   }
 
-  public Optional<Post> getPost(final Long id) {
+  @DgsQuery(field = "getPost")
+  public Post getPost(final Long id) {
     return this.postService.getPost(id);
   }
 

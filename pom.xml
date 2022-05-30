@@ -72,6 +72,20 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- GraphQL Java Kickstart Tools https://github.com/graphql-java-kickstart/graphql-spring-boot -->
+<!--		<dependency>-->
+<!--			<groupId>com.graphql-java-kickstart</groupId>-->
+<!--			<artifactId>graphql-spring-boot-starter</artifactId>-->
+<!--			<version>6.0.0</version>-->
+<!--		</dependency>-->
+<!--		&lt;!&ndash; to embed GraphiQL tool &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>com.graphql-java-kickstart</groupId>-->
+<!--			<artifactId>graphiql-spring-boot-starter</artifactId>-->
+<!--			<version>6.0.0</version>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>

@@ -1,7 +1,6 @@
 package com.graphqlexample.project.models;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,8 +9,10 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "posts")
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "posts")
 public class Post implements Serializable {
   @Id
   @Column(name = "ID")
@@ -24,6 +25,12 @@ public class Post implements Serializable {
   @Column(name = "published_date_time")
   private LocalDate publishedDate;
   private transient String formattedDate;
+
+  public Post(String title, String content, LocalDate parse) {
+    this.setTitle(title);
+    this.setContent(content);
+    this.setPublishedDate(parse);
+  }
 
   public String getFormattedDate() {
     return getFormattedDate().toString();

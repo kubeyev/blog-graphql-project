@@ -1,10 +1,11 @@
 package com.graphqlexample.project.services;
 
+import com.graphqlexample.project.exceptions.PostNotFoundException;
 import com.graphqlexample.project.models.Post;
 import com.graphqlexample.project.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RestController
 @RequiredArgsConstructor
 public class PostService {
 
@@ -20,19 +22,16 @@ public class PostService {
 
   @Transactional
   public Post createPost(final String title, final String content, final String publishedDate) {
-    Post _post = new Post();
-    _post.setTitle(title);
-    _post.setContent(content);
-    _post.setPublishedDate(LocalDate.parse(publishedDate));
-    return this.postRepository.save(_post);
+    return postRepository.save(new Post(title, content, LocalDate.parse(publishedDate)));
   }
   @Transactional(readOnly = true)
   public List<Post> getAllPosts(final int count) {
     return this.postRepository.findAll().stream().limit(count).collect(Collectors.toList());
   }
   @Transactional(readOnly = true)
-  public Optional<Post> getPost(final Long id) {
-    return this.postRepository.findById(id);
+  public Post getPost(final Long id) {
+    return postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException("Post with id " + id + " not found!"));
   }
 
   @Transactional(readOnly = true)
@@ -40,26 +39,19 @@ public class PostService {
     return (int) this.postRepository.count();
   }
 
-  public Post updatePost(Long id, String title, String content) throws NotFoundException {
-    Optional<Post> postOpt = postRepository.findById(id);
-    if (postOpt.isPresent()) {
-      Post post = postOpt.get();
-      if (title != null)
-        post.setTitle(title);
-      if (content != null)
-        post.setContent(content);
-      postRepository.save(post);
-      return post;
-    }
-    throw new NotFoundException();
+  public Post updatePost(Long id, String title, String content) {
+    Post post = postRepository.findById(id)
+      .orElseThrow(() -> new PostNotFoundException("Post with id " + id + " not found!"));
+    post.setTitle(title);
+    post.setContent(content);
+    return post;
   }
 
   public boolean deletePost(Long id) {
-    try {
+    Optional<Post> post = postRepository.findById(id);
+    if (post.isPresent()) {
       postRepository.deleteById(id);
       return true;
-    } catch (Exception e) {
-      return false;
-    }
+    } else return false;
   }
 }

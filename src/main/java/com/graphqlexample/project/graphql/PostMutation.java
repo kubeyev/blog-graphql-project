@@ -23,7 +23,7 @@ public class PostMutation {
     return this.postService.createPost(input.getTitle(), input.getContent(), input.getPublishedDate());
   }
 
-  public Post updatePost(final Long id, final String title, final String content) throws NotFoundException {
+  public Post updatePost(final Long id, final String title, final String content) {
     return this.postService.updatePost(id, title, content);
   }
 

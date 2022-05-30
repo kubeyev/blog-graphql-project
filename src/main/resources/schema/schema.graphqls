@@ -5,7 +5,7 @@ type Post {
     publishedDate: String
 }
 type Query {
-    findAllPosts(count: Int): [Post]!
+    findAllPosts(count: Int!): [Post]!
     getPost(id :ID): Post
     countPosts: Int!
 }
