@@ -1,30 +1,30 @@
 package com.graphqlexample.project.graphql;
 
-import com.netflix.graphql.dgs.DgsQuery;
 import lombok.RequiredArgsConstructor;
+import com.netflix.graphql.dgs.DgsQuery;
 import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.InputArgument;
 import com.graphqlexample.project.models.Post;
 import com.graphqlexample.project.services.PostService;
 
 import java.util.List;
-import java.util.Optional;
 
 @DgsComponent
 @RequiredArgsConstructor
 public class PostQuery {
   private final PostService postService;
 
-  @DgsQuery(field = "findAllPosts")
-  public List<Post> findAllPosts(final int count) {
-    return this.postService.getAllPosts(count);
+  @DgsQuery
+  public List<Post> findPostsByCount(@InputArgument final int count) {
+    return postService.getPostsByCount(count);
   }
 
-  @DgsQuery(field = "getPost")
+  @DgsQuery
   public Post getPost(final Long id) {
-    return this.postService.getPost(id);
+    return postService.getPost(id);
   }
 
-  @DgsQuery(field = "countPosts")
+  @DgsQuery
   public int countPosts() {
     return postService.countPosts();
   }

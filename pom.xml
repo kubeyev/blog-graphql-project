@@ -72,6 +72,10 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.netflix.graphql.dgs</groupId>
+			<artifactId>graphql-dgs-extended-scalars</artifactId>
+		</dependency>
 
 		<!-- GraphQL Java Kickstart Tools https://github.com/graphql-java-kickstart/graphql-spring-boot -->
 <!--		<dependency>-->

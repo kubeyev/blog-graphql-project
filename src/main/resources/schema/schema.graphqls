@@ -1,22 +1,30 @@
+scalar Long
+
 type Post {
-    id: ID,
+    id: Long,
     title: String,
     content: String,
     publishedDate: String
 }
 type Query {
-    findAllPosts(count: Int!): [Post]!
-    getPost(id :ID): Post
+    findPostsByCount (count: Int!): [Post]!
+    getPost(id :Long!): Post
     countPosts: Int!
 }
 type Mutation {
-    createPost(input: PostInput!):Post
-    updatePost(id: ID!, title: String, content: String): Post
-    deletePost(id: ID!): Boolean!
+    createPost(input: PostCreateDto!):Post
+    updatePost(input: PostUpdateDto!): Post
+    deletePost(id: Long!): Boolean!
 }
 
-input PostInput{
+input PostCreateDto{
     title: String!,
     content: String!,
     publishedDate: String!
+}
+
+input PostUpdateDto{
+    id: Long!,
+    title: String!,
+    content: String!
 }
