@@ -23,10 +23,12 @@ public class PostMutation {
     return this.postService.createPost(input.getTitle(), input.getContent(), input.getPublishedDate());
   }
 
+  @DgsMutation(field = "updatePost")
   public Post updatePost(final Long id, final String title, final String content) {
     return this.postService.updatePost(id, title, content);
   }
 
+  @DgsMutation(field = "deletePost")
   public boolean deletePost(Long id) {
     return this.postService.deletePost(id);
   }

@@ -24,6 +24,7 @@ public class PostQuery {
     return this.postService.getPost(id);
   }
 
+  @DgsQuery(field = "countPosts")
   public int countPosts() {
     return postService.countPosts();
   }
