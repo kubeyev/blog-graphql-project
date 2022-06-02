@@ -8,7 +8,7 @@ import com.graphqlexample.project.models.Post;
 import com.graphqlexample.project.dtos.PostCreateDto;
 import com.graphqlexample.project.dtos.PostUpdateDto;
 import com.graphqlexample.project.repositories.PostRepository;
-import com.graphqlexample.project.exceptions.PostNotFoundException;
+import com.graphqlexample.project.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,31 +21,38 @@ import java.util.stream.Collectors;
 public class PostService {
 
   private final PostRepository postRepository;
+  @Transactional(readOnly = true)
+  public List<Post> getAllPosts() {
+    return postRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Post> getPostsByCount(final int count) {
+    return postRepository.findAll().stream().limit(count).collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  public Post getPost(final Long id) {
+    return postRepository.findById(id)
+      .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found!"));
+  }
+
+  @Transactional(readOnly = true)
+  public int countPosts() {
+    return (int) postRepository.count();
+  }
 
   @Transactional
   public Post createPost(PostCreateDto input) {
     return postRepository.save(new Post(input.getTitle(), input.getContent(), LocalDate.parse(input.getPublishedDate())));
   }
-  @Transactional(readOnly = true)
-  public List<Post> getPostsByCount(final int count) {
-    return this.postRepository.findAll().stream().limit(count).collect(Collectors.toList());
-  }
-  @Transactional(readOnly = true)
-  public Post getPost(final Long id) {
-    return postRepository.findById(id)
-      .orElseThrow(() -> new PostNotFoundException("Post with id " + id + " not found!"));
-  }
-
-  @Transactional(readOnly = true)
-  public int countPosts() {
-    return (int) this.postRepository.count();
-  }
 
   public Post updatePost(PostUpdateDto input) {
     Post post = postRepository.findById(input.getId())
-      .orElseThrow(() -> new PostNotFoundException("Post with id " + input.getId() + " not found!"));
+      .orElseThrow(() -> new ResourceNotFoundException("Post with id " + input.getId() + " not found!"));
     post.setTitle(input.getTitle());
     post.setContent(input.getContent());
+    post.setPublishedDate(LocalDate.parse(input.getPublishedDate()));
     return postRepository.save(post);
   }
 

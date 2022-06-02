@@ -8,4 +8,4 @@ services:
       MYSQL_ROOT_PASSWORD: pass
       MYSQL_DATABASE: blog
     ports:
-      - 3308:3306
+      - 3310:3306

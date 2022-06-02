@@ -6,15 +6,52 @@ type Post {
     content: String,
     publishedDate: String
 }
+
+type User {
+    id: Long,
+    userName: String,
+    password: String,
+    role: Role
+}
+
+type Role {
+    id: Long,
+    name: String
+}
+
+type Comment {
+    id: Long,
+    content: String,
+    publishedDate: String,
+    post: Post
+}
+
+type AuthResponseDto {
+    token: String
+}
+
 type Query {
-    findPostsByCount (count: Int!): [Post]!
+    getAllPosts: [Post]!
+    getPostsByCount (count: Int!): [Post]!
     getPost(id :Long!): Post
     countPosts: Int!
+
+    getAllComments: [Comment]!
+    getCommentsByCount (count: Int!): [Comment]!
+    getComment(id :Long!): Comment
+    countComments: Int!
 }
 type Mutation {
     createPost(input: PostCreateDto!):Post
     updatePost(input: PostUpdateDto!): Post
     deletePost(id: Long!): Boolean!
+
+    createComment(input: CommentCreateDto!): Comment
+    updateComment(input: CommentUpdateDto!): Comment
+    deleteComment(id: Long!): Boolean!
+
+    register(input: UserRegisterDto): String!
+    login(input: UserLoginDto): AuthResponseDto!
 }
 
 input PostCreateDto{
@@ -25,6 +62,27 @@ input PostCreateDto{
 
 input PostUpdateDto{
     id: Long!,
-    title: String!,
-    content: String!
+    title: String,
+    content: String,
+    publishedDate: String
+}
+
+input CommentCreateDto {
+    content: String!,
+    puplishedDate: String!,
+    post: Long!
+}
+
+input CommentUpdateDto {
+    id: Long!,
+    content: String,
+    puplishedDate: String
+}
+
+input UserRegisterDto {
+    username: String!, password: String!
+}
+
+input UserLoginDto {
+    username: String!, password: String!
 }

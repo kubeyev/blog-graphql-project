@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostUpdateDto {
-  Long id;
-  String title;
-  String content;
-  String publishedDate;
+public class RegistrationDto {
+    String username;
+    String password;
 }

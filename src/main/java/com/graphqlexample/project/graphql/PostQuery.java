@@ -15,7 +15,12 @@ public class PostQuery {
   private final PostService postService;
 
   @DgsQuery
-  public List<Post> findPostsByCount(@InputArgument final int count) {
+  public List<Post> getAllPosts() {
+    return postService.getAllPosts();
+  }
+
+  @DgsQuery
+  public List<Post> getPostsByCount(@InputArgument final int count) {
     return postService.getPostsByCount(count);
   }
 

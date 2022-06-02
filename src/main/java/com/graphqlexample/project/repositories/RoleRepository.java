@@ -1,9 +1,10 @@
 package com.graphqlexample.project.repositories;
 
-import com.graphqlexample.project.models.Comment;
+import com.graphqlexample.project.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
+  Role findByName(String name);
 }
