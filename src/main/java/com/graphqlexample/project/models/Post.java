@@ -26,7 +26,7 @@ public class Post implements Serializable {
   private LocalDate publishedDate;
   private transient String formattedDate;
 
-  public Post(String title, String content, LocalDate parse) {
+  public Post(String title, String content, LocalDate parse, User user) {
     this.setTitle(title);
     this.setContent(content);
     this.setPublishedDate(parse);

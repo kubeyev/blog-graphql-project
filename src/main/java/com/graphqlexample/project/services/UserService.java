@@ -1,14 +1,18 @@
 package com.graphqlexample.project.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.graphqlexample.project.models.User;
+import com.graphqlexample.project.models.Role;
 import com.graphqlexample.project.repositories.RoleRepository;
 import com.graphqlexample.project.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +24,11 @@ public class UserService implements UserDetailsService {
   private final PasswordEncoder passwordEncoder;
 
   public User createUser(User user) {
-    var role = roleRepository.findByName("ROLE_USER");
-    user.setRole(role);
+    var read_user_role = roleRepository.findByName("READ_USER");
+    var write_user_role = roleRepository.findByName("WRITE_USER");
+    Set<Role> roleSet = new HashSet<>();
+    roleSet.add(read_user_role);
+    roleSet.add(write_user_role);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
   }

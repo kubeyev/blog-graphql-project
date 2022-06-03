@@ -1,19 +1,19 @@
 package com.graphqlexample.project.config.jwt;
 
-import com.graphqlexample.project.services.UserService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import com.graphqlexample.project.services.UserService;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import java.io.IOException;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -32,8 +32,8 @@ public class JwtFilter extends GenericFilterBean {
         logger.info("do filter...");
         var token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
-            var userLogin = jwtProvider.getLoginFromToken(token);
-            var userService = this.userService.loadUserByUsername(userLogin);
+            var username = jwtProvider.getLoginFromToken(token);
+            var userService = this.userService.loadUserByUsername(username);
             var auth = new UsernamePasswordAuthenticationToken(userService, null, userService.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

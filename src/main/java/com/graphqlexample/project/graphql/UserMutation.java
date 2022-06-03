@@ -1,6 +1,5 @@
 package com.graphqlexample.project.graphql;
 
-import com.graphqlexample.project.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import com.netflix.graphql.dgs.DgsMutation;
 import com.netflix.graphql.dgs.DgsComponent;
@@ -9,6 +8,7 @@ import com.graphqlexample.project.models.User;
 import com.graphqlexample.project.services.UserService;
 import com.graphqlexample.project.dtos.AuthResponseDto;
 import com.graphqlexample.project.dtos.RegistrationDto;
+import com.graphqlexample.project.config.jwt.JwtProvider;
 
 @DgsComponent
 @RequiredArgsConstructor

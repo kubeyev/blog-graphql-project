@@ -1,11 +1,11 @@
 package com.graphqlexample.project.graphql;
 
+import lombok.RequiredArgsConstructor;
+import com.netflix.graphql.dgs.DgsQuery;
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.InputArgument;
 import com.graphqlexample.project.models.Comment;
 import com.graphqlexample.project.services.CommentService;
-import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsQuery;
-import com.netflix.graphql.dgs.InputArgument;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
