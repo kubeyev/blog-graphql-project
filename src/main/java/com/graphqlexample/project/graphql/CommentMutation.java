@@ -17,19 +17,19 @@ public class CommentMutation {
   private final CommentService commentService;
 
   @DgsMutation
-  @Secured({"WRITE_ADMIN", "WRITE_USER"})
+  @Secured({"ROLE_WRITE_ADMIN", "ROLE_WRITE_USER"})
   public Comment createComment(@InputArgument CommentCreateDto input) {
     return commentService.createComment(input);
   }
 
   @DgsMutation
-  @Secured({"WRITE_ADMIN", "WRITE_USER"})
+  @Secured({"ROLE_WRITE_ADMIN", "ROLE_WRITE_USER"})
   public Comment updateComment(@InputArgument CommentUpdateDto input) {
     return commentService.updateComment(input);
   }
 
   @DgsMutation
-  @Secured({"WRITE_ADMIN", "WRITE_USER"})
+  @Secured({"ROLE_WRITE_ADMIN", "ROLE_WRITE_USER"})
   public boolean deleteComment(@InputArgument Long id) {
     return commentService.deleteComment(id);
   }

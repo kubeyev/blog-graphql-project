@@ -16,20 +16,19 @@ public class PostMutation {
   private final PostService postService;
 
   @DgsMutation
-  @Secured("WRITE_ADMIN")
+  @Secured("ROLE_WRITE_ADMIN")
   public Post createPost(@InputArgument PostCreateDto input) {
     return postService.createPost(input);
-
   }
 
   @DgsMutation
-  @Secured("WRITE_ADMIN")
+  @Secured("ROLE_WRITE_ADMIN")
   public Post updatePost(@InputArgument PostUpdateDto input) {
     return postService.updatePost(input);
   }
 
   @DgsMutation
-  @Secured("WRITE_ADMIN")
+  @Secured("ROLE_WRITE_ADMIN")
   public boolean deletePost(@InputArgument Long id) {
     return postService.deletePost(id);
   }
