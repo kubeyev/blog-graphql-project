@@ -1,11 +1,27 @@
 version: '3.5'
 
 services:
-  db:
-    image: mysql:5.7
+  server:
+    ports:
+      - "8000:8000"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: pass
-      MYSQL_DATABASE: blog
+      - DB_NAME=blog
+      - DB_PORT=3306
+      - DB_HOST=mygraphqlblog_db_1
+      - DB_USER=sa
+      - DB_PASSWORD=pass
+    depends_on:
+      - db
+    build: .
+
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_DATABASE=blog
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=pass
     ports:
-      - 3310:3306
+      - "3306:3306"
