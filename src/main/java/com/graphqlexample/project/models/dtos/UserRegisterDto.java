@@ -1,4 +1,4 @@
-package com.graphqlexample.project.dtos;
+package com.graphqlexample.project.models.dtos;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginDto {
+public class UserRegisterDto {
     String login;
     String password;
 }

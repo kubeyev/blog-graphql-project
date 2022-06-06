@@ -1,15 +1,14 @@
-package com.graphqlexample.project.dtos;
+package com.graphqlexample.project.models.dtos;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.graphqlexample.project.models.Post;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentCreateDto {
+public class CommentUpdateDto {
+  Long id;
   String content;
   String publishedDate;
-  Post post;
 }

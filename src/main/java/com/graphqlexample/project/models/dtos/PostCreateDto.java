@@ -1,4 +1,4 @@
-package com.graphqlexample.project.dtos;
+package com.graphqlexample.project.models.dtos;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostUpdateDto {
-  Long id;
+public class PostCreateDto {
   String title;
   String content;
   String publishedDate;

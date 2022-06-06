@@ -1,13 +1,14 @@
-package com.graphqlexample.project.services;
+package com.graphqlexample.project.services.implementations;
 
+import com.graphqlexample.project.models.entities.Comment;
+import com.graphqlexample.project.repositories.CommentRepository;
+import com.graphqlexample.project.services.services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.graphqlexample.project.models.Comment;
-import com.graphqlexample.project.dtos.CommentCreateDto;
-import com.graphqlexample.project.dtos.CommentUpdateDto;
+import com.graphqlexample.project.models.dtos.CommentCreateDto;
+import com.graphqlexample.project.models.dtos.CommentUpdateDto;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.access.AccessDeniedException;
-import com.graphqlexample.project.repositories.CommentRepository;
 import com.graphqlexample.project.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
-  private final AuthService authService;
+public class CommentServiceImpl implements CommentService {
+  private final AuthServiceImpl authServiceImpl;
   private final CommentRepository commentRepository;
 
   @Transactional(readOnly = true)
@@ -47,15 +48,15 @@ public class CommentService {
             input.getContent(),
             LocalDate.parse(input.getPublishedDate()),
             input.getPost(),
-            authService.getCurrentUser()
+            authServiceImpl.getCurrentUser()
     ));
   }
 
   public Comment updateComment(CommentUpdateDto input) {
     var comment = commentRepository.findById(input.getId())
       .orElseThrow(() -> new ResourceNotFoundException("Comment with id " + input.getId() + " not found!"));
-    if (authService.ownerUser(comment.getUser()) ||
-                    authService.getCurrentUser().getRoles().contains("WRITE_ADMIN")) {
+    if (authServiceImpl.ownerUser(comment.getUser()) ||
+                    authServiceImpl.getCurrentUser().getRoles().contains("WRITE_ADMIN")) {
       comment.setContent(input.getContent());
       comment.setPublishedDate(LocalDate.parse(input.getPublishedDate()));
       return commentRepository.save(comment);
@@ -68,8 +69,8 @@ public class CommentService {
   public boolean deleteComment(Long id) {
     var comment = commentRepository.findById(id);
     if (comment.isPresent() & (
-            authService.ownerUser(comment.get().getUser()) ||
-                    authService.getCurrentUser().getRoles().contains("WRITE_ADMIN"))) {
+            authServiceImpl.ownerUser(comment.get().getUser()) ||
+                    authServiceImpl.getCurrentUser().getRoles().contains("WRITE_ADMIN"))) {
       commentRepository.deleteById(id);
       return true;
     } else return false;

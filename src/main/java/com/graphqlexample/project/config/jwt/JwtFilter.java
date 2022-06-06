@@ -3,7 +3,7 @@ package com.graphqlexample.project.config.jwt;
 import lombok.extern.java.Log;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import com.graphqlexample.project.services.UserService;
+import com.graphqlexample.project.services.implementations.UserServiceImpl;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +25,7 @@ public class JwtFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -33,7 +33,7 @@ public class JwtFilter extends GenericFilterBean {
         var token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
             var username = jwtProvider.getLoginFromToken(token);
-            var userService = this.userService.loadUserByUsername(username);
+            var userService = this.userServiceImpl.loadUserByUsername(username);
             var auth = new UsernamePasswordAuthenticationToken(userService, null, userService.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

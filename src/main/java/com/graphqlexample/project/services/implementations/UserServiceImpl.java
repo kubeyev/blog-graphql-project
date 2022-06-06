@@ -1,28 +1,30 @@
-package com.graphqlexample.project.services;
+package com.graphqlexample.project.services.implementations;
 
+import com.graphqlexample.project.services.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import com.graphqlexample.project.models.User;
-import com.graphqlexample.project.models.Role;
+import com.graphqlexample.project.models.entities.Role;
+import com.graphqlexample.project.models.entities.User;
 import com.graphqlexample.project.repositories.RoleRepository;
 import com.graphqlexample.project.repositories.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
   private final UserRepository userRepository;
 
   private final RoleRepository roleRepository;
 
   private final PasswordEncoder passwordEncoder;
 
+  @Override
   public User createUser(User user) {
     var read_user_role = roleRepository.findByName("READ_USER");
     var write_user_role = roleRepository.findByName("WRITE_USER");
@@ -33,10 +35,12 @@ public class UserService implements UserDetailsService {
     return userRepository.save(user);
   }
 
+  @Override
   public User findByUsername(String username) {
     return userRepository.findByUsername(username);
   }
 
+  @Override
   public User findByLoginAndPassword(String username, String password) {
     var user = findByUsername(username);
     if (user != null) {

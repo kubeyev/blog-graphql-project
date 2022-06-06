@@ -1,4 +1,4 @@
-package com.graphqlexample.project.dtos;
+package com.graphqlexample.project.models.response;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

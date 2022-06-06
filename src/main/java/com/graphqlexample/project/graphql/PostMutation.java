@@ -3,33 +3,33 @@ package com.graphqlexample.project.graphql;
 
 import com.netflix.graphql.dgs.*;
 import lombok.RequiredArgsConstructor;
-import com.graphqlexample.project.models.Post;
-import com.graphqlexample.project.dtos.PostUpdateDto;
-import com.graphqlexample.project.dtos.PostCreateDto;
-import com.graphqlexample.project.services.PostService;
+import com.graphqlexample.project.models.entities.Post;
+import com.graphqlexample.project.models.dtos.PostUpdateDto;
+import com.graphqlexample.project.models.dtos.PostCreateDto;
+import com.graphqlexample.project.services.implementations.PostServiceImpl;
 import org.springframework.security.access.annotation.Secured;
 
 @DgsComponent
 @RequiredArgsConstructor
 public class PostMutation {
 
-  private final PostService postService;
+  private final PostServiceImpl postServiceImpl;
 
   @DgsMutation
   @Secured("ROLE_WRITE_ADMIN")
   public Post createPost(@InputArgument PostCreateDto input) {
-    return postService.createPost(input);
+    return postServiceImpl.createPost(input);
   }
 
   @DgsMutation
   @Secured("ROLE_WRITE_ADMIN")
   public Post updatePost(@InputArgument PostUpdateDto input) {
-    return postService.updatePost(input);
+    return postServiceImpl.updatePost(input);
   }
 
   @DgsMutation
   @Secured("ROLE_WRITE_ADMIN")
   public boolean deletePost(@InputArgument Long id) {
-    return postService.deletePost(id);
+    return postServiceImpl.deletePost(id);
   }
 }

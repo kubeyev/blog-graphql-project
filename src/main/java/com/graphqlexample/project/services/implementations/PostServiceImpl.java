@@ -1,15 +1,16 @@
-package com.graphqlexample.project.services;
+package com.graphqlexample.project.services.implementations;
 
+import com.graphqlexample.project.models.entities.Post;
+import com.graphqlexample.project.repositories.PostRepository;
+import com.graphqlexample.project.services.services.PostService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.access.AccessDeniedException;
-import com.graphqlexample.project.models.Post;
-import com.graphqlexample.project.dtos.PostCreateDto;
-import com.graphqlexample.project.dtos.PostUpdateDto;
-import com.graphqlexample.project.repositories.PostRepository;
+import com.graphqlexample.project.models.dtos.PostCreateDto;
+import com.graphqlexample.project.models.dtos.PostUpdateDto;
 import com.graphqlexample.project.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -21,34 +22,40 @@ import java.util.stream.Collectors;
 @Service
 @RestController
 @RequiredArgsConstructor
-public class PostService {
+public class PostServiceImpl implements PostService {
 
-  private final AuthService authService;
+  private final AuthServiceImpl authServiceImpl;
   private final PostRepository postRepository;
+
+  @Override
   @Transactional(readOnly = true)
   public List<Post> getAllPosts() {
     return postRepository.findAll();
   }
 
+  @Override
   @Transactional(readOnly = true)
   public List<Post> getPostsByCount(final int count) {
     return postRepository.findAll().stream().limit(count).collect(Collectors.toList());
   }
 
+  @Override
   @Transactional(readOnly = true)
   public Post getPost(final Long id) {
     return postRepository.findById(id)
       .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found!"));
   }
 
+  @Override
   @Transactional(readOnly = true)
   public int countPosts() {
     return (int) postRepository.count();
   }
 
+  @Override
   @Transactional
   public Post createPost(PostCreateDto input) {
-    var user = authService.getCurrentUser();
+    var user = authServiceImpl.getCurrentUser();
     log.info("User {} is creating post", user.getUsername());
     return postRepository.save(
             new Post(
@@ -59,6 +66,7 @@ public class PostService {
             ));
   }
 
+  @Override
   public Post updatePost(PostUpdateDto input) throws AccessDeniedException, ResourceNotFoundException{
     Post post = postRepository.findById(input.getId())
       .orElseThrow(() -> new ResourceNotFoundException("Post with id " + input.getId() + " not found!"));
@@ -68,6 +76,7 @@ public class PostService {
     return postRepository.save(post);
   }
 
+  @Override
   public boolean deletePost(Long id) {
     Optional<Post> post = postRepository.findById(id);
     if (post.isPresent()) {

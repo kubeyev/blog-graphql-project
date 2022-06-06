@@ -1,6 +1,6 @@
 package com.graphqlexample.project.repositories;
 
-import com.graphqlexample.project.models.User;
+import com.graphqlexample.project.models.entities.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 

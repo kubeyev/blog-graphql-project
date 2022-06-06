@@ -1,4 +1,4 @@
-package com.graphqlexample.project.models;
+package com.graphqlexample.project.models.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
