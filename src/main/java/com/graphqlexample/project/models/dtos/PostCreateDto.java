@@ -1,10 +1,10 @@
 package com.graphqlexample.project.models.dtos;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 @Data
+@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostCreateDto {

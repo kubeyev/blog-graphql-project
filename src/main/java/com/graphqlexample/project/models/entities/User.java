@@ -1,7 +1,9 @@
 package com.graphqlexample.project.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +16,8 @@ import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User implements Serializable, UserDetails {
     @Id
@@ -33,6 +37,11 @@ public class User implements Serializable, UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    public User(String username, String password) {
+        this.setUsername(username);
+        this.setPassword(password);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

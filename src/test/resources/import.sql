@@ -1,0 +1,16 @@
+--
+-- ALTER SEQUENCE hibernate_sequence RESTART WITH 1;
+-- DELETE FROM COMMENTS;
+-- DELETE FROM POSTS;
+-- DELETE FROM ROLES;
+-- DELETE FROM USER_ROLE;
+-- DELETE FROM USERS;
+--
+--
+-- INSERT INTO ROLES(id,name) VALUES(1,'WRITE_USER');
+-- INSERT INTO ROLES(id,name) VALUES(1,'WRITE_ADMIN');
+-- INSERT INTO ROLES(id,name) VALUES(1,'READ_ADMIN');
+--
+--
+-- INSERT INTO EMPLOYEE(id,first_name,last_name,gender,birth_date,hire_date,department_id) VALUES(100,'Alex','Bonilla','M','1990-12-07','2011-04-01',100);
+-- INSERT INTO EMPLOYEE(id,first_name,last_name,gender,birth_date,hire_date,department_id) VALUES(200,'Duke','Stacey','M','1989-07-11','2012-08-21',100);

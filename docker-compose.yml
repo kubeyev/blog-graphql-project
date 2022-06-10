@@ -8,7 +8,7 @@ services:
     environment:
       - DB_NAME=blog
       - DB_PORT=3306
-      - DB_HOST=mygraphqlblog_db_1
+      - DB_HOST=mygraphqlblog_db
       - DB_USER=sa
       - DB_PASSWORD=pass
     depends_on:
@@ -16,6 +16,7 @@ services:
     build: .
 
   db:
+    container_name: mygraphqlblog_db
     image: mysql:latest
     restart: always
     environment:

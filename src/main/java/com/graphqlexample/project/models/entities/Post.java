@@ -24,15 +24,22 @@ public class Post implements Serializable {
   private String content;
   @Column(name = "published_date_time")
   private LocalDate publishedDate;
-  private transient String formattedDate;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false, updatable = false)
+  private User user;
+
 
   public Post(String title, String content, LocalDate parse, User user) {
     this.setTitle(title);
     this.setContent(content);
     this.setPublishedDate(parse);
+    this.setUser(user);
   }
 
-  public String getFormattedDate() {
-    return getFormattedDate().toString();
+  public Post(String title, String content, String publishedDate, User user) {
+    this.setTitle(title);
+    this.setContent(content);
+    this.setPublishedDate(LocalDate.parse(publishedDate));
+    this.setUser(user);
   }
 }
