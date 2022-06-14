@@ -8,4 +8,6 @@ public interface UserService {
     public User findByUsername(String username);
 
     public User findByLoginAndPassword(String username, String password);
+
+    public User createAdminUser(User user);
 }

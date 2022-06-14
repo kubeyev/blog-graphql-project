@@ -53,7 +53,9 @@ import static org.mockito.Mockito.when;
 public class PostServiceImplTest extends AbstractTestcontainers {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserServiceImpl userService;
+
+
 
     @Autowired
     private PostRepository postRepository;
@@ -73,8 +75,8 @@ public class PostServiceImplTest extends AbstractTestcontainers {
 
     @BeforeEach
     public void setUp() {
-        commentUser = userRepository.save(new User("abl", "pass"));
-        adminUser = userRepository.save(new User("admin", "pass"));
+        commentUser = userService.createUser(new User("abl", "pass"));
+        adminUser = userService.createUser(new User("admin", "pass"));
         roles = List.of(
                 new Role(1L, "WRITE_USER"),
                 new Role(2L, "WRITE_ADMIN"),
@@ -167,19 +169,23 @@ public class PostServiceImplTest extends AbstractTestcontainers {
     }
 
     @Test
-    void deletePost_withCorrectID() {
+    void deletePost_withCorrectID_ifSuccessful_NoExceptionThrown() {
         Long postID = 1L;
 
-        var result = postService.deletePost(postID);
-        assertThat(result).isEqualTo(true);
+        postService.deletePost(postID);
+        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () -> {
+            postService.getPost(1L);
+        }, "Post with id 1 not found!");
+        assertThat(thrownEx.getMessage()).isEqualTo("Post with id 1 not found!");
     }
 
     @Test
-    void deletePost_withWrongID() {
-        Long postID = 1L;
-        Mockito.when(postService.deletePost(1L)).thenReturn(false);
+    void deletePost_withWrongID_ExceptionShouldBeThrown() {
+        Long postID = 100L;
 
-        var result = postService.deletePost(postID);
-        assertThat(result).isEqualTo(false);
+        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () ->{
+            postService.deletePost(postID);
+        }, "Post with id 100 not found!");
+        assertThat(thrownEx.getMessage()).isEqualTo("Post with id 100 not found!");
     }
 }

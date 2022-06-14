@@ -12,8 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +25,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
   @Override
   public User createUser(User user) {
-    var read_user_role = roleRepository.findByName("READ_USER");
-    var write_user_role = roleRepository.findByName("WRITE_USER");
-    Set<Role> roleSet = new HashSet<>();
-    roleSet.add(read_user_role);
-    roleSet.add(write_user_role);
+    String[] roleNames = {"READ_USER", "WRITE_USER"};
+    Set<Role> roleSet = createRoleSets(roleNames);
+    user.setRoles(roleSet);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
+  }
+
+  @Override
+  public User createAdminUser(User user) {
+    String[] roleNames = {"READ_ADMIN", "WRITE_ADMIN", "READ_USER", "WRITE_USER"};
+    Set<Role> roleSet = createRoleSets(roleNames);
+    user.setRoles(roleSet);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    return userRepository.save(user);
+  }
+
+  private Set<Role> createRoleSets(String[] roleList) {
+    var roles = new HashSet<Role>();
+    for (String roleName:roleList) {
+      var role = roleRepository.findByName(roleName);
+      roles.add(role);
+    }
+    return roles;
   }
 
   @Override

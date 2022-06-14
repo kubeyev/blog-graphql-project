@@ -29,7 +29,7 @@ public class PostMutation {
 
   @DgsMutation
   @Secured("ROLE_WRITE_ADMIN")
-  public boolean deletePost(@InputArgument Long id) {
-    return postServiceImpl.deletePost(id);
+  public void deletePost(@InputArgument Long id) {
+    postServiceImpl.deletePost(id);
   }
 }

@@ -1,0 +1,25 @@
+type Post {
+    id: Long,
+    title: String,
+    content: String,
+    publishedDate: String
+}
+
+type User {
+    id: Long,
+    userName: String,
+    password: String,
+    role: Role
+}
+
+type Role {
+    id: Long,
+    name: String
+}
+
+type Comment {
+    id: Long,
+    content: String,
+    publishedDate: String,
+    post: Post
+}

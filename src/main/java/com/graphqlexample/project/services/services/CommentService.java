@@ -23,5 +23,5 @@ public interface CommentService {
 
     public Comment updateComment(CommentUpdateDto input) throws ResourceNotFoundException, AccessDeniedException;
 
-    public boolean deleteComment(Long id);
+    public String deleteComment(Long id);
 }

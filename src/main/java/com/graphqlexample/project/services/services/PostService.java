@@ -22,5 +22,5 @@ public interface PostService {
 
     public Post updatePost(PostUpdateDto input) throws AccessDeniedException, ResourceNotFoundException;
 
-    public boolean deletePost(Long id);
+    public String deletePost(Long id);
 }

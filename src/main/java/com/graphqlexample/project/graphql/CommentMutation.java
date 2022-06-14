@@ -30,7 +30,7 @@ public class CommentMutation {
 
   @DgsMutation
   @Secured({"ROLE_WRITE_ADMIN", "ROLE_WRITE_USER"})
-  public boolean deleteComment(@InputArgument Long id) {
-    return commentServiceImpl.deleteComment(id);
+  public void deleteComment(@InputArgument Long id) {
+    commentServiceImpl.deleteComment(id);
   }
 }

@@ -1,0 +1,36 @@
+input PostCreateDto{
+    title: String!,
+    content: String!,
+    publishedDate: String!
+}
+
+input PostUpdateDto{
+    id: Long!,
+    title: String,
+    content: String,
+    publishedDate: String
+}
+
+input CommentCreateDto {
+    content: String!,
+    puplishedDate: String!,
+    post: Long!
+}
+
+input CommentUpdateDto {
+    id: Long!,
+    content: String,
+    puplishedDate: String
+}
+
+input UserRegisterDto {
+    username: String!, password: String!
+}
+
+input UserLoginDto {
+    username: String!, password: String!
+}
+
+type AuthResponseDto {
+    token: String
+}

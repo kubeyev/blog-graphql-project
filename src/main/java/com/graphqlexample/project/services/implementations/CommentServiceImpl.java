@@ -53,6 +53,7 @@ public class CommentServiceImpl implements CommentService {
   }
 
   public Comment updateComment(CommentUpdateDto input) {
+    System.out.println(authServiceImpl.getCurrentUser());
     var comment = commentRepository.findById(input.getId())
       .orElseThrow(() -> new ResourceNotFoundException("Comment with id " + input.getId() + " not found!"));
     if (authServiceImpl.ownerUser(comment.getUser()) ||
@@ -66,13 +67,16 @@ public class CommentServiceImpl implements CommentService {
     }
   }
 
-  public boolean deleteComment(Long id) {
-    var comment = commentRepository.findById(id);
-    if (comment.isPresent() & (
-            authServiceImpl.ownerUser(comment.get().getUser()) ||
-                    authServiceImpl.getCurrentUser().getRoles().contains("WRITE_ADMIN"))) {
+  public String deleteComment(Long id) {
+    var comment = commentRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Comment with id " + id + " not found!"));
+
+    if (authServiceImpl.ownerUser(comment.getUser()) || authServiceImpl.getCurrentUser().getRoles().contains("WRITE_ADMIN")) {
       commentRepository.deleteById(id);
-      return true;
-    } else return false;
+    }
+    else {
+      throw new AccessDeniedException("This user has no permision to delete comment!");
+    }
+    return "Comment deleted successfully by " + authServiceImpl.getCurrentUser().getUsername();
   }
 }

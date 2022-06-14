@@ -77,14 +77,10 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public boolean deletePost(Long id) {
-    Optional<Post> post = postRepository.findById(id);
-    if (post.isPresent()) {
-      postRepository.deleteById(id);
-      return true;
-    }
-    else {
-      return false;
-    }
+  public String deletePost(Long id) {
+    var post = postRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found!"));
+    postRepository.deleteById(id);
+    return "Post deleted successfully by " + authServiceImpl.getCurrentUser().getUsername();
   }
 }
