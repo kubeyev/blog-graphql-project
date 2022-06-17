@@ -5,5 +5,7 @@ import com.graphqlexample.project.models.entities.User;
 public interface AuthService {
     public User getCurrentUser();
 
-    public boolean ownerUser(User user);
+    public boolean isOwnerUser(User user);
+
+    public boolean isAdminUser();
 }

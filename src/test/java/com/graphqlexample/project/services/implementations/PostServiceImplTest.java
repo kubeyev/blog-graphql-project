@@ -5,17 +5,7 @@ import com.graphqlexample.project.models.entities.Role;
 import com.graphqlexample.project.models.entities.User;
 import com.graphqlexample.project.repositories.RoleRepository;
 import com.graphqlexample.project.repositories.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.graphqlexample.project.models.entities.Post;
@@ -24,25 +14,18 @@ import com.graphqlexample.project.models.dtos.PostUpdateDto;
 import com.graphqlexample.project.repositories.PostRepository;
 import com.graphqlexample.project.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.SecurityContext;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.time.LocalDate;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(
@@ -55,7 +38,8 @@ public class PostServiceImplTest extends AbstractTestcontainers {
     @Autowired
     private UserServiceImpl userService;
 
-
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private PostRepository postRepository;
@@ -66,34 +50,40 @@ public class PostServiceImplTest extends AbstractTestcontainers {
     @Autowired
     private PostServiceImpl postService;
 
-    List<Role> roles;
     List<Post> posts;
     List<Post> expectedAllPosts;
     Post expectedOneGetPost;
-    User commentUser;
     User adminUser;
 
     @BeforeEach
     public void setUp() {
-        commentUser = userService.createUser(new User("abl", "pass"));
-        adminUser = userService.createUser(new User("admin", "pass"));
-        roles = List.of(
-                new Role(1L, "WRITE_USER"),
-                new Role(2L, "WRITE_ADMIN"),
-                new Role(3L, "READ_USER"),
-                new Role(4L, "READ_ADMIN")
-        );
+        adminUser = userService.createAdminUser(new User("admin", "pass"));
+        roleRepository.saveAll(List.of(
+                new Role("READ_USER"),
+                new Role("READ_ADMIN"),
+                new Role("WRITE_USER"),
+                new Role("WRITE_ADMIN")
+        ));
         posts = List.of(
-                new Post("first","1", "2022-01-01", adminUser),
-                new Post("second","2","2022-02-02", adminUser),
-                new Post("third","3", "2022-03-03", adminUser),
-                new Post("forth","4", "2022-04-04", adminUser),
-                new Post("fifth","5", "2022-05-05", adminUser),
-                new Post("sixth","6", "2022-06-06", adminUser)
+                new Post("first","1", LocalDate.parse("2022-01-01"), adminUser),
+                new Post("second","2",LocalDate.parse("2022-02-02"), adminUser),
+                new Post("third","3", LocalDate.parse("2022-03-03"), adminUser),
+                new Post("forth","4", LocalDate.parse("2022-04-04"), adminUser),
+                new Post("fifth","5", LocalDate.parse("2022-05-05"), adminUser),
+                new Post("sixth","6", LocalDate.parse("2022-06-06"), adminUser)
         );
-        roleRepository.saveAll(roles);
-        expectedOneGetPost = postRepository.save(new Post("seventh","7", "2022-07-07", adminUser));
         expectedAllPosts = postRepository.saveAll(posts);
+        expectedOneGetPost = expectedAllPosts.get(0);
+    }
+
+    @AfterEach
+    public void clearing() {
+        postRepository.deleteAll();
+        postRepository.flush();
+        roleRepository.deleteAll();
+        roleRepository.flush();
+        userRepository.deleteAll();
+        userRepository.flush();
     }
 
     @Test
@@ -132,10 +122,10 @@ public class PostServiceImplTest extends AbstractTestcontainers {
                 .isEqualTo(expectedAllPosts);
     }
 
-//            result.forEach(post -> System.out.println(post));
+    //            result.forEach(post -> System.out.println(post));
     @Test
     void gettingOnePost_usingCorrectID() {
-        var result = postService.getPost(1L);
+        var result = postService.getPost(expectedOneGetPost.getId());
         assertThat(result)
                 .usingRecursiveComparison()
                 .ignoringFields("user", "id")
@@ -144,48 +134,57 @@ public class PostServiceImplTest extends AbstractTestcontainers {
 
     @Test
     void gettingOnePost_usingUsingNotExistingID_thatShouldReturnException() {
-        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () -> {
-            postService.getPost(100L);
-        }, "Post with id 100 not found!");
+        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () ->
+                postService.getPost(100L),
+                "Post with id 100 not found!");
         assertThat(thrownEx.getMessage()).isEqualTo("Post with id 100 not found!");
     }
 
     @Test
     void givenIDAndInput_returnPartiallyUpdatedPost() {
         var publishedDate = "2022-06-06";
-        var toUpdatePostID = 1L;
+        var toUpdatePostID = expectedOneGetPost.getId();
         var updatedTitle = "Testing update title";
         var updatedContent = "Testing update content";
         var updateDto = new PostUpdateDto(toUpdatePostID, updatedTitle, updatedContent, publishedDate);
-        var initialPost = postRepository.findById(toUpdatePostID);
+        var initialPost = expectedOneGetPost;
 
         var expected = new Post(updatedTitle, updatedContent, LocalDate.parse(publishedDate), adminUser);
         var result = postService.updatePost(updateDto);
-        assertThat(result.getId()).isNotNull();
+        assertThat(result).isNotNull();
         assertThat(result)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "user")
-                .isEqualTo(expected);
+                .isEqualTo(expected)
+                .isNotEqualTo(initialPost);
     }
 
     @Test
     void deletePost_withCorrectID_ifSuccessful_NoExceptionThrown() {
-        Long postID = 1L;
+        Long postID = expectedOneGetPost.getId();
+
+        Authentication authentication = mock(Authentication.class);
+        org.springframework.security.core.context.SecurityContext securityContext = mock(
+                org.springframework.security.core.context.SecurityContext.class
+        );
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(adminUser);
 
         postService.deletePost(postID);
-        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () -> {
-            postService.getPost(1L);
-        }, "Post with id 1 not found!");
-        assertThat(thrownEx.getMessage()).isEqualTo("Post with id 1 not found!");
+        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () ->
+            postService.getPost(postID),
+            "Post with id " + postID + " not found!");
+        assertThat(thrownEx.getMessage()).isEqualTo("Post with id " + postID + " not found!");
     }
 
     @Test
     void deletePost_withWrongID_ExceptionShouldBeThrown() {
         Long postID = 100L;
 
-        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () ->{
-            postService.deletePost(postID);
-        }, "Post with id 100 not found!");
+        ResourceNotFoundException thrownEx = assertThrows(ResourceNotFoundException.class, () ->
+                postService.deletePost(postID),
+                "Post with id 100 not found!");
         assertThat(thrownEx.getMessage()).isEqualTo("Post with id 100 not found!");
     }
 }

@@ -35,11 +35,4 @@ public class Post implements Serializable {
     this.setPublishedDate(parse);
     this.setUser(user);
   }
-
-  public Post(String title, String content, String publishedDate, User user) {
-    this.setTitle(title);
-    this.setContent(content);
-    this.setPublishedDate(LocalDate.parse(publishedDate));
-    this.setUser(user);
-  }
 }

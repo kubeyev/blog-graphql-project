@@ -1,20 +1,25 @@
 package com.graphqlexample.project.services.implementations;
 
+import com.graphqlexample.project.exceptions.ResourceNotFoundException;
 import com.graphqlexample.project.services.services.UserService;
 import lombok.RequiredArgsConstructor;
 import com.graphqlexample.project.models.entities.Role;
 import com.graphqlexample.project.models.entities.User;
 import com.graphqlexample.project.repositories.RoleRepository;
 import com.graphqlexample.project.repositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
   private final UserRepository userRepository;
@@ -24,19 +29,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
+  @Transactional
   public User createUser(User user) {
     String[] roleNames = {"READ_USER", "WRITE_USER"};
-    Set<Role> roleSet = createRoleSets(roleNames);
-    user.setRoles(roleSet);
+    user.setRoles(createRoleSets(roleNames));
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
   }
 
   @Override
+  @Transactional
   public User createAdminUser(User user) {
     String[] roleNames = {"READ_ADMIN", "WRITE_ADMIN", "READ_USER", "WRITE_USER"};
-    Set<Role> roleSet = createRoleSets(roleNames);
-    user.setRoles(roleSet);
+    user.setRoles(createRoleSets(roleNames));
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
   }
@@ -44,26 +49,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   private Set<Role> createRoleSets(String[] roleList) {
     var roles = new HashSet<Role>();
     for (String roleName:roleList) {
-      var role = roleRepository.findByName(roleName);
+      Role role = roleRepository.findFirstByName(roleName)
+              .orElse(roleRepository.save(new Role(roleName)));
       roles.add(role);
     }
     return roles;
   }
 
   @Override
-  public User findByUsername(String username) {
-    return userRepository.findByUsername(username);
+  public User findByUsername(String username) throws UsernameNotFoundException{
+    User user = userRepository.findFirstByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found!"));
+    return user;
   }
 
   @Override
-  public User findByLoginAndPassword(String username, String password) {
+  public User findByLoginAndPassword(String username, String password) throws AccessDeniedException {
     var user = findByUsername(username);
-    if (user != null) {
-      if (passwordEncoder.matches(password, user.getPassword())) {
+    if (passwordEncoder.matches(password, user.getPassword())) {
         return user;
-      }
     }
-    return null;
+    else {
+      throw new AccessDeniedException("Invalid user password");
+    }
   }
 
   @Override
