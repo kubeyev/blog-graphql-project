@@ -88,7 +88,6 @@
 			<version>6.0.0</version>
 			<scope>test</scope>
 		</dependency>
-
 		<!--For graphql -->
 		<dependency>
 			<groupId>com.netflix.graphql.dgs</groupId>
@@ -112,20 +111,11 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-
-		<!-- GraphQL Java Kickstart Tools https://github.com/graphql-java-kickstart/graphql-spring-boot -->
-<!--		<dependency>-->
-<!--			<groupId>com.graphql-java-kickstart</groupId>-->
-<!--			<artifactId>graphql-spring-boot-starter</artifactId>-->
-<!--			<version>6.0.0</version>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; to embed GraphiQL tool &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>com.graphql-java-kickstart</groupId>-->
-<!--			<artifactId>graphiql-spring-boot-starter</artifactId>-->
-<!--			<version>6.0.0</version>-->
-<!--			<scope>runtime</scope>-->
-<!--		</dependency>-->
+		<!-- For AOP -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

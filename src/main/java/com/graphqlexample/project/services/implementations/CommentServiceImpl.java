@@ -1,5 +1,7 @@
 package com.graphqlexample.project.services.implementations;
 
+import com.graphqlexample.project.aop.annotations.CommentSecurity;
+import com.graphqlexample.project.aop.annotations.MethodLogger;
 import lombok.RequiredArgsConstructor;
 import com.graphqlexample.project.models.entities.Comment;
 import com.graphqlexample.project.repositories.RoleRepository;
@@ -24,28 +26,33 @@ public class CommentServiceImpl implements CommentService {
 
   private final RoleRepository roleRepository;
 
+  @MethodLogger
   @Transactional(readOnly = true)
   public List<Comment> getAllComments() {
     return commentRepository.findAll();
   }
 
+  @MethodLogger
   @Transactional(readOnly = true)
   public List<Comment> getCommentsByCount(final int count) {
     return commentRepository.findAll().stream().limit(count).collect(Collectors.toList());
   }
 
+  @MethodLogger
   @Transactional(readOnly = true)
   public Comment getComment(final Long id) {
     return commentRepository.findById(id)
       .orElseThrow(() -> new ResourceNotFoundException("Comment with id " + id + " not found!"));
   }
 
+  @MethodLogger
   @Transactional(readOnly = true)
   public int countComments() {
     return (int) commentRepository.count();
   }
 
   @Transactional
+  @MethodLogger
   public Comment createComment(CommentCreateDto input) {
     return commentRepository.save(new Comment(
             input.getContent(),
@@ -55,30 +62,20 @@ public class CommentServiceImpl implements CommentService {
     ));
   }
 
+  @MethodLogger
+  @CommentSecurity
   public Comment updateComment(CommentUpdateDto input) {
-    var comment = commentRepository.findById(input.getId())
-      .orElseThrow(() -> new ResourceNotFoundException("Comment with id " + input.getId() + " not found!"));
-    if (authServiceImpl.isOwnerUser(comment.getUser()) ||
-                    authServiceImpl.isAdminUser()) {
-      comment.setContent(input.getContent());
-      comment.setPublishedDate(LocalDate.parse(input.getPublishedDate()));
-      return commentRepository.save(comment);
-    }
-    else {
-      throw new AccessDeniedException("This user has no permision to update comment!");
-    }
+    var comment = commentRepository.findById(input.getId()).get();
+    comment.setContent(input.getContent());
+    comment.setPublishedDate(LocalDate.parse(input.getPublishedDate()));
+    return commentRepository.save(comment);
   }
 
+  @MethodLogger
+  @CommentSecurity
   public String deleteComment(Long id) {
-    var comment = commentRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Comment with id " + id + " not found!"));
-
-    if (authServiceImpl.isOwnerUser(comment.getUser()) || authServiceImpl.isAdminUser()) {
-      commentRepository.deleteById(id);
-    }
-    else {
-      throw new AccessDeniedException("This user has no permision to delete comment!");
-    }
+    var comment = commentRepository.findById(id).get();
+    commentRepository.deleteById(id);
     return "Comment deleted successfully by " + authServiceImpl.getCurrentUser().getUsername();
   }
 }

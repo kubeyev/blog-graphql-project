@@ -1,5 +1,6 @@
 package com.graphqlexample.project.services.implementations;
 
+import com.graphqlexample.project.aop.annotations.MethodLogger;
 import com.graphqlexample.project.models.entities.Post;
 import com.graphqlexample.project.repositories.PostRepository;
 import com.graphqlexample.project.services.services.PostService;
@@ -28,18 +29,21 @@ public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
 
   @Override
+  @MethodLogger
   @Transactional(readOnly = true)
   public List<Post> getAllPosts() {
     return postRepository.findAll();
   }
 
   @Override
+  @MethodLogger
   @Transactional(readOnly = true)
   public List<Post> getPostsByCount(final int count) {
     return postRepository.findAll().stream().limit(count).collect(Collectors.toList());
   }
 
   @Override
+  @MethodLogger
   @Transactional(readOnly = true)
   public Post getPost(final Long id) {
     return postRepository.findById(id)
@@ -47,12 +51,14 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  @MethodLogger
   @Transactional(readOnly = true)
   public int countPosts() {
     return (int) postRepository.count();
   }
 
   @Override
+  @MethodLogger
   @Transactional
   public Post createPost(PostCreateDto input) {
     var user = authServiceImpl.getCurrentUser();
@@ -67,6 +73,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  @MethodLogger
   public Post updatePost(PostUpdateDto input) throws AccessDeniedException, ResourceNotFoundException{
     Post post = postRepository.findById(input.getId())
       .orElseThrow(() -> new ResourceNotFoundException("Post with id " + input.getId() + " not found!"));
@@ -76,7 +83,9 @@ public class PostServiceImpl implements PostService {
     return postRepository.save(post);
   }
 
+
   @Override
+  @MethodLogger
   public String deletePost(Long id) {
     var post = postRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found!"));

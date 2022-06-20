@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
@@ -168,7 +169,6 @@ class CommentServiceImplTest  extends AbstractTestcontainers {
     @Test
     void deleteComment_withCorrectID() {
         Long commentID = oneComment.getId();
-        System.out.println(oneComment);
 
         Authentication authentication = mock(Authentication.class);
         org.springframework.security.core.context.SecurityContext securityContext = mock(
@@ -192,6 +192,24 @@ class CommentServiceImplTest  extends AbstractTestcontainers {
             commentService.deleteComment(commentID),
                     "Comment with id 100 not found!");
         assertThat(thrownEx.getMessage()).isEqualTo("Comment with id 100 not found!");
+    }
+
+    @Test
+    void tryToDeleteComment_withExistingID_butDifferentUser_shouldThrowException() {
+        var wrongUser = userService.createUser(new User("I can not change it", "but I'll try"));
+        Long commentID = oneComment.getId();
+
+        Authentication authentication = mock(Authentication.class);
+        org.springframework.security.core.context.SecurityContext securityContext = mock(
+                org.springframework.security.core.context.SecurityContext.class
+        );
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(wrongUser);
+        AccessDeniedException thrownEx = assertThrows(AccessDeniedException.class, () ->
+                commentService.deleteComment(commentID),
+                "This user has no permision to update comment!");
+        assertThat(thrownEx.getMessage()).isEqualTo("This user has no permision to update comment!");
     }
 
 }
